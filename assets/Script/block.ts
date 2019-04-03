@@ -26,6 +26,7 @@ export default class Block extends cc.Component {
 
   }
   gainIcon(type, amount = 1){
+    cc.log(type)
     for ( let i = 0; i < amount ; i++ ) {
       var prefab = Global.game.iconPrefabMap[type];
       if ( !prefab ) {

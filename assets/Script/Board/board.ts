@@ -4,11 +4,6 @@ import Area from "./Area";
 
 @ccclass // 使用装饰器声明 CCClass
 export default class Board extends cc.Component {
-  @property([cc.Prefab])
-  public blockPrefabs: cc.Prefab[] = [];
-  @property([cc.Prefab])
-  public areaPrefabs: cc.Prefab[] = [];
-
   @property(cc.Label)
   label: cc.Label = null;
 
@@ -25,28 +20,15 @@ export default class Board extends cc.Component {
     this.node.emit("PHASE:"+this._phase);
   }
 
-  public blockPrefabMap = {};
-  public areaPrefabMap = {};
+  public scaleRate = 1;
 
   start () {
-
-    this.initBlockPrefabMap();
-    this.initAreaPrefabMap();
     this.initBoard();
 
     this.turn = 1;
 
   },
-  initBlockPrefabMap(){
-    this.blockPrefabs.forEach(function(prefab){
-      this.blockPrefabMap[prefab.name] = prefab;
-    },this)
-  },
-  initAreaPrefabMap(){
-    this.areaPrefabs.forEach(function(prefab){
-      this.areaPrefabMap[prefab.name] = prefab;
-    },this)
-  },
+
   initBoard(){
     this.maxWidth = 12;
     this.maxHeight = 12;
@@ -62,7 +44,7 @@ export default class Board extends cc.Component {
     for ( let x =0; x<this.maxWidth; x++) {
       this.areas.push([])
       for ( let y = 0; y < this.maxHeight; y++ ) {
-        var areaNode = cc.instantiate(this.areaPrefabMap["plain"])
+        var areaNode = cc.instantiate(Global.game.areaPrefabMap["plain"])
         areaNode.x = Global.TILE_WIDTH*(x-(this.maxWidth-1)/2);
         areaNode.y = Global.TILE_HEIGHT*(y-(this.maxHeight-1)/2);
         this.node.addChild(areaNode);
@@ -102,12 +84,9 @@ export default class Board extends cc.Component {
     this.height = maxY - minY+1;
     this.node.anchorX = (this.width/2+minX)/this.maxWidth;
     this.node.anchorY = (this.height/2+minY)/this.maxHeight;
-    cc.log(this.node.anchor)
-    cc.log(this.node.anchorX)
-    cc.log(this.node.anchorY)
     let maxSize = Math.max( this.width*Global.TILE_WIDTH, this.height*Global.TILE_HEIGHT )
-    let scaleRate = cc.winSize.width/maxSize;
-    this.node.setScale(scaleRate)
+    this.scaleRate = cc.winSize.width/maxSize;
+    this.node.setScale(this.scaleRate)
   }
   // 成员方法
   onLoad() {
