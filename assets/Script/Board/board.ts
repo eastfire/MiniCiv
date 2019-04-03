@@ -63,8 +63,8 @@ export default class Board extends cc.Component {
       this.areas.push([])
       for ( let y = 0; y < this.maxHeight; y++ ) {
         var areaNode = cc.instantiate(this.areaPrefabMap["plain"])
-        areaNode.x = Global.TILE_WIDTH*x;
-        areaNode.y = Global.TILE_HEIGHT*y;
+        areaNode.x = Global.TILE_WIDTH*(x-(this.maxWidth-1)/2);
+        areaNode.y = Global.TILE_HEIGHT*(y-(this.maxHeight-1)/2);
         this.node.addChild(areaNode);
 
         let area = areaNode.getComponent("area");
@@ -77,6 +77,11 @@ export default class Board extends cc.Component {
       }
     }
 
+    this.adjustCenter();
+
+  }
+
+  adjustCenter(){
     //找到中点
     let maxX = 0;
     let maxY = 0;
@@ -88,21 +93,22 @@ export default class Board extends cc.Component {
           minX = Math.min(minX, x)
           minY = Math.min(minY, y)
           maxX = Math.max(maxX, x)
-          maxY = Math.min(maxY, y)
+          maxY = Math.max(maxY, y)
         }
       }
     }
 
     this.width = maxX - minX+1;
     this.height = maxY - minY+1;
-    this.node.x = -(this.width/2+minX)*Global.TILE_WIDTH;
-    this.node.y = -(this.height/2+minY)*Global.TILE_HEIGHT;
-
+    this.node.anchorX = (this.width/2+minX)/this.maxWidth;
+    this.node.anchorY = (this.height/2+minY)/this.maxHeight;
+    cc.log(this.node.anchor)
+    cc.log(this.node.anchorX)
+    cc.log(this.node.anchorY)
     let maxSize = Math.max( this.width*Global.TILE_WIDTH, this.height*Global.TILE_HEIGHT )
     let scaleRate = cc.winSize.width/maxSize;
     this.node.setScale(scaleRate)
-
-  },
+  }
   // 成员方法
   onLoad() {
       // init logic
