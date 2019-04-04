@@ -32,12 +32,33 @@ export default class Block extends cc.Component {
   start(){
     this.cross.node.active = false;
   }
-  getIcon(type){
+  getIcon(type:string):number{
     let count = 0;
     this.iconList.node.children.forEach(function(node){
       if ( node.getComponent("icon").type === type) count++;
     },this)
     return  count;
+  }
+  getAllIcon():object{
+    let result = {}
+    this.iconList.node.children.forEach(function(node){
+      var type = node.getComponent("icon").type;
+      if ( result[type] ) result[type]++;
+      else result[type] = 1;
+    },this)
+    return result;
+  }
+  getIconTypeCount():number{
+    let result = {}
+    count = 0;
+    this.iconList.node.children.forEach(function(node){
+      var type = node.getComponent("icon").type;
+      if ( !result[type] ) {
+        result[type] = 1;
+        count++;
+      }
+    },this)
+    return count;
   }
   extractIcon(type){
 

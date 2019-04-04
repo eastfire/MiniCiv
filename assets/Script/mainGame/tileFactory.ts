@@ -10,11 +10,11 @@ export default class TileFactory extends cc.Component {
       blocks:[
         {
           position:{x:0,y:0},
-          type: "science"
+          type: "research"
         },
         {
           position:{x:0,y:1},
-          type: "science"
+          type: "produce"
         },
         {
           position:{x:1,y:0},
@@ -23,6 +23,52 @@ export default class TileFactory extends cc.Component {
         {
           position:{x:1,y:1},
           type: "food"
+        },
+      ],
+      width: 2,
+      height: 2,
+      name: "XXX"
+    })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "food"
+        },
+        {
+          position:{x:0,y:1},
+          type: "produce"
+        },
+        {
+          position:{x:1,y:0},
+          type: "research"
+        },
+        {
+          position:{x:1,y:1},
+          type: "research"
+        },
+      ],
+      width: 2,
+      height: 2,
+      name: "XXX"
+    })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "food"
+        },
+        {
+          position:{x:0,y:1},
+          type: "research"
+        },
+        {
+          position:{x:1,y:0},
+          type: "produce"
+        },
+        {
+          position:{x:1,y:1},
+          type: "produce"
         },
       ],
       width: 2,

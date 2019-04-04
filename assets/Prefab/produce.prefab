@@ -12,7 +12,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "science",
+    "_name": "produce",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -36,7 +36,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 57,
+      "width": 64,
       "height": 64
     },
     "_anchorPoint": {
@@ -79,7 +79,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "ba9ef3d4-98e5-4200-9b19-4671655ffdef"
+      "__uuid__": "472cb065-442f-4f8a-b69c-631fbb6e61d5"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -104,7 +104,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "1560cee0-7cb2-4ab3-836e-4265f3188258"
+      "__uuid__": "064e1789-f5b0-4052-99f1-b1c11a8bfdf2"
     },
     "fileId": "aaUHLlZeBP2rfHzj9rICFv",
     "sync": false

@@ -279,8 +279,6 @@
       "__id__": 5
     },
     "_enabled": true,
-    "label": null,
-    "_phase": "",
     "_id": "019tm2P61PIb5aUxO8h+at"
   },
   {
@@ -391,6 +389,11 @@
     "board": {
       "__id__": 6
     },
+    "_phase": "",
+    "_food": 0,
+    "_maxFood": 0,
+    "_research": 0,
+    "_maxResearch": 0,
     "_id": "aaWX+crZVENLkEfTBJdW/J"
   }
 ]

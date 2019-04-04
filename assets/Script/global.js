@@ -6,4 +6,6 @@ module.exports = {
 
 
   WAITING_TILE_SCALE: 0.6,
+
+  INIT_TILE_CHOICE_COUNT: 3,
 }

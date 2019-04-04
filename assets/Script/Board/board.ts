@@ -4,21 +4,6 @@ import Area from "./Area";
 
 @ccclass // 使用装饰器声明 CCClass
 export default class Board extends cc.Component {
-  @property(cc.Label)
-  label: cc.Label = null;
-
-  @property
-  _phase = "";
-  @property
-  public get phase(){
-    return this._phase;
-  }
-  @property
-  set phase(newValue){
-    if ( this._phase == newValue ) return;
-    this._phase = newValue;
-    this.node.emit("PHASE:"+this._phase);
-  }
 
   public scaleRate = 1;
 
