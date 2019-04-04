@@ -1,4 +1,5 @@
 const {ccclass, property} = cc._decorator;
+import Block from "../Building/block"
 
 @ccclass // 使用装饰器声明 CCClass
 export default class Area extends cc.Component {
@@ -15,6 +16,8 @@ export default class Area extends cc.Component {
 
     this.node.active = true;
   }
+  @property(cc.Sprite)
+  public mainSprite: cc.Sprite = null;
 
   @property
   _isOpen = false;
@@ -39,5 +42,17 @@ export default class Area extends cc.Component {
 
   start(){
     this.node.active = this.isOpen;
+  }
+
+  public gainBlock(blockNode:cc.Node):void{
+    this.mainSprite.node.addChild(blockNode)
+    blockNode.x = 0;
+    blockNode.y = 0;
+    this.block = blockNode.getComponent(Block)
+  }
+
+  public checkValid(block:Block): boolean {
+    if ( this.block || !this.isOpen ) return false;
+    return true;
   }
 }

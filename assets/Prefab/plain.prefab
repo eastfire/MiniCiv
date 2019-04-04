@@ -53,8 +53,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 825,
-      "y": 516,
+      "x": 0,
+      "y": 0,
       "z": 0
     },
     "_scale": {
@@ -255,6 +255,10 @@
       "__id__": 1
     },
     "_enabled": true,
+    "_isAvailable": false,
+    "mainSprite": {
+      "__id__": 3
+    },
     "_isOpen": "",
     "_id": ""
   },

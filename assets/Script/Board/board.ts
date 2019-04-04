@@ -29,7 +29,7 @@ export default class Board extends cc.Component {
 
   },
 
-  initBoard(){
+  initBoard():void{
     this.maxWidth = 12;
     this.maxHeight = 12;
 
@@ -63,7 +63,7 @@ export default class Board extends cc.Component {
 
   }
 
-  adjustCenter(){
+  adjustCenter():void{
     //找到中点
     let maxX = 0;
     let maxY = 0;
@@ -79,7 +79,8 @@ export default class Board extends cc.Component {
         }
       }
     }
-
+    this.minX = minX;
+    this.minY = minY;
     this.width = maxX - minX+1;
     this.height = maxY - minY+1;
     this.node.anchorX = (this.width/2+minX)/this.maxWidth;
@@ -91,5 +92,9 @@ export default class Board extends cc.Component {
   // 成员方法
   onLoad() {
       // init logic
+  }
+
+  getArea(position): Area {
+    return this.areas[position.x][position.y];
   }
 }

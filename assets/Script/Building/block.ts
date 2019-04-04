@@ -5,6 +5,8 @@ const Global = require("global");
 export default class Block extends cc.Component {
   @property(cc.Sprite)
   private background:cc.Sprite=null;
+  @property(cc.Sprite)
+  private cross:cc.Sprite=null;
 
   @property(cc.Layout)
   private iconList:cc.Layout=null;
@@ -12,8 +14,23 @@ export default class Block extends cc.Component {
   @property(cc.Node)
   private effectLayer:cc.Node = null;
 
-  start(){
+  @property
+  _isValid = true;
+  @property
+  public get isValid(){
+    return this._isValid;
+  }
+  @property
+  public set isValid(newValue){
+    if ( this._isValid == newValue ) return;
 
+    this._isValid = newValue;
+
+    this.cross.node.active = !this._isValid;
+  }
+
+  start(){
+    this.cross.node.active = false;
   }
   getIcon(type){
     let count = 0;

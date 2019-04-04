@@ -35,13 +35,16 @@ export default class TileFactory extends cc.Component {
     node.addComponent("buildingTile")
 
     let card = Utils.sample(this.deck)
-    let result = Utils.rotateTile(Math.round(Math.random()*4), card.blocks, card.width, card.height )
+    card = JSON.parse(JSON.stringify(card)); //复制一份
+    let result = Utils.rotateTile(Utils.random(0,3), card.blocks, card.width, card.height )
     card.width = result.width;
     card.height = result.height;
     card.blocks.forEach(function(block){
       node.getComponent("buildingTile").addBlock(block)
     })
     node.getComponent("buildingTile").adjustCenter();
+    node.width = card.width*Global.TILE_WIDTH;
+    node.height = (card.height)*Global.TILE_HEIGHT;
     return node;
   }
   addTile(){
