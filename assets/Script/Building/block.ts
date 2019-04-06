@@ -39,13 +39,21 @@ export default class Block extends cc.Component {
     },this)
     return  count;
   }
-  getAllIcon():object{
-    let result = {}
+  getAllIcon():[number]{
+    let result = [];
+    let map = {}
     this.iconList.node.children.forEach(function(node){
-      var type = node.getComponent("icon").type;
-      if ( result[type] ) result[type]++;
-      else result[type] = 1;
+      let type = node.getComponent("icon").type;
+      if ( map[type] ) {
+        map[type]++;
+      } else map[type] = 1;
     },this)
+    for ( let type in map ) {
+      result.push({
+        type,
+        count: map[type]
+      })
+    }
     return result;
   }
   getIconTypeCount():number{
@@ -60,9 +68,23 @@ export default class Block extends cc.Component {
     },this)
     return count;
   }
-  extractIcon(type){
-
+  extractOneIcon(type){
+    for ( let i = 0; i < this.iconList.node.children.length; i++){
+      var node = this.iconList.node.children[i]
+      let t = node.getComponent("icon").type;
+      if ( t === type ) {
+        var position = Global.game.node.convertToNodeSpaceAR(this.iconList.node.convertToWorldSpaceAR(node.position))
+        node.removeFromParent(false)
+        node.position = position;
+        return node;
+      }
+    },this)
+    if ( this.iconList.node.children.length === 0 ) {
+      this.area.removeBlock();
+    }
+    return null;
   }
+
   gainIcon(type, amount = 1){
     for ( let i = 0; i < amount ; i++ ) {
       var prefab = Global.game.iconPrefabMap[type];

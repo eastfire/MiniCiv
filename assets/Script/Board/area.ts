@@ -49,6 +49,12 @@ export default class Area extends cc.Component {
     blockNode.x = 0;
     blockNode.y = 0;
     this.block = blockNode.getComponent(Block)
+    this.block.area = this;
+    this.block.position = this.position;
+  }
+  public removeBlock(){
+    this.block.node.removeFromParent(true)
+    this.block = null;
   }
 
   public checkValid(block:Block): boolean {
