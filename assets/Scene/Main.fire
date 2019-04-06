@@ -263,7 +263,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0,
+      "y": 110,
       "z": 0
     },
     "_scale": {
@@ -1273,6 +1273,12 @@
     "areaPrefabs": [
       {
         "__uuid__": "a0b147b4-e261-49de-8f11-82f66b81222f"
+      },
+      {
+        "__uuid__": "430e54c1-e3ba-4e7f-8655-0e7d6ca55dc3"
+      },
+      {
+        "__uuid__": "952638bd-93f2-4e3a-8ef1-0e39502ec79b"
       }
     ],
     "iconPrefabs": [

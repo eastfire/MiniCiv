@@ -155,7 +155,7 @@ export default class MainGame extends cc.Component {
     this.initAreaPrefabMap();
     this.initTileFactory();
 
-    this.boardBottomLine = cc.winSize.height/2-cc.winSize.width/2-Global.TILE_HEIGHT/2;
+    this.boardBottomLine = cc.winSize.height/2+this.board.node.y-cc.winSize.width/2-Global.TILE_HEIGHT/2;
 
     this.initTileLine()
 
@@ -256,10 +256,14 @@ export default class MainGame extends cc.Component {
 
     for ( let i = 0; i < this.tiles.length; i++ ) {
       this.tiles[i].stopAllActions();
-      this.tiles[i].runAction(cc.moveTo(0.3, i*size+size/2-cc.winSize.width/2, -420))
+      this.tiles[i].runAction(cc.moveTo(0.3, i*size+size/2-cc.winSize.width/2, -310))
     }
   }
-
+  activeTileLine(active):void{
+    for ( let i = 0; i < this.tiles.length; i++ ) {
+      this.tiles[i].opacity = active?255:50;
+    }
+  }
   setTileEventHandler(node:cc.Node):void{
     node.on("touchstart",function(event){
       if ( this.phase !== "placeTile" ) return;
@@ -340,6 +344,7 @@ export default class MainGame extends cc.Component {
       let blockNode = tileNode.children[i]
       let block = blockNode.getComponent("block")
       block.isValid = true;
+      block.showBackground();
     }
     tileNode.stopAllActions();
     tileNode.runAction(cc.spawn(
@@ -362,6 +367,7 @@ export default class MainGame extends cc.Component {
         block.isValid = false;
         valid = false;
       }
+      block.hideBackground();
     }
     return valid;
   }
@@ -485,9 +491,11 @@ export default class MainGame extends cc.Component {
   }
   startPlaceTile(){
     this.phase = "placeTile"
+    this.activeTileLine(true);
   }
   collectResource(){
     this.phase = "collectResource"
+    this.activeTileLine(false);
   }
   turnEnd(){
     this.phase = "turnEnd"

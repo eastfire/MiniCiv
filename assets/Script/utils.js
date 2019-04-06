@@ -44,6 +44,13 @@ module.exports = {
       }
     }
   },
+  flipTileX(blocks, width, height){
+    for ( let i = 0; i < blocks.length; i++ ) {
+      var block = blocks[i];
+      var x = block.position.x;
+      blocks[i].position.x = width-1-x;
+    }
+  },
   getPointDistance(p1,p2) {
     return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y)
   },

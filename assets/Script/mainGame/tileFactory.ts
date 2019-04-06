@@ -85,6 +85,7 @@ export default class TileFactory extends cc.Component {
     let result = Utils.rotateTile(Utils.random(0,3), card.blocks, card.width, card.height )
     card.width = result.width;
     card.height = result.height;
+    if ( Math.random()>0.5) Utils.flipTileX(card.blocks,card.width, card.height);
     card.blocks.forEach(function(block){
       node.getComponent("buildingTile").addBlock(block)
     })

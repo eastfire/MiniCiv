@@ -6,6 +6,8 @@ export default class Block extends cc.Component {
   @property(cc.Sprite)
   private background:cc.Sprite=null;
   @property(cc.Sprite)
+  private backgroundMask:cc.Sprite=null;
+  @property(cc.Sprite)
   private cross:cc.Sprite=null;
 
   @property(cc.Layout)
@@ -101,5 +103,12 @@ export default class Block extends cc.Component {
 
   removeIcon(type){
 
+  }
+
+  hideBackground(){
+    this.backgroundMask.node.runAction(cc.fadeOut(0.2))
+  }
+  showBackground(){
+    this.backgroundMask.node.runAction(cc.fadeIn(0.2))
   }
 }
