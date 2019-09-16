@@ -34,12 +34,19 @@ export default class Block extends cc.Component {
   start(){
     this.cross.node.active = false;
   }
-  getIcon(type:string):number{
+  getIconNumber(type:string):number{
     let count = 0;
     this.iconList.node.children.forEach(function(node){
       if ( node.getComponent("icon").type === type) count++;
     },this)
     return  count;
+  }
+  getIconNodes(type:string):cc.Node[]{
+    let result = [];
+    this.iconList.node.children.forEach(function(node){
+      if ( node.getComponent("icon").type === type) result.push(node);
+    },this)
+    return result;
   }
   getAllIcon():[number]{
     let result = [];
@@ -58,6 +65,9 @@ export default class Block extends cc.Component {
     }
     return result;
   }
+  forEachIcon(callback){
+    this.iconList.node.children.forEach(callback)
+  }
   getIconTypeCount():number{
     let result = {}
     count = 0;
@@ -71,23 +81,33 @@ export default class Block extends cc.Component {
     return count;
   }
   extractOneIcon(type){
+    let node = null;
     for ( let i = 0; i < this.iconList.node.children.length; i++){
-      var node = this.iconList.node.children[i]
+      node = this.iconList.node.children[i]
       let t = node.getComponent("icon").type;
       if ( t === type ) {
         var position = Global.game.node.convertToNodeSpaceAR(this.iconList.node.convertToWorldSpaceAR(node.position))
         node.removeFromParent(false)
-        node.position = position;
-        return node;
+        node.position = position;        
       }
-    },this)
+    }
     if ( this.iconList.node.children.length === 0 ) {
       this.area.removeBlock();
     }
-    return null;
+    return node;
+  }
+  extractOneIconNode(node){
+    var position = Global.game.node.convertToNodeSpaceAR(this.iconList.node.convertToWorldSpaceAR(node.position))
+    node.removeFromParent(false)
+    node.position = position; 
+    
+    if ( this.iconList.node.children.length === 0 ) {
+      this.area.removeBlock();
+    }
+    return node;
   }
 
-  gainIcon(type, amount = 1){
+  gainIcon(type, amount = 1, isExtract = false){
     for ( let i = 0; i < amount ; i++ ) {
       var prefab = Global.game.iconPrefabMap[type];
       if ( !prefab ) {
@@ -97,6 +117,7 @@ export default class Block extends cc.Component {
       var icon = cc.instantiate(prefab)
       icon.x = 0;
       icon.y = 0;
+      icon.getComponent("icon").isExtract = isExtract;
       this.iconList.node.addChild(icon);
     }
   }

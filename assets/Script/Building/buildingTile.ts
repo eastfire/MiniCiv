@@ -41,12 +41,15 @@ export default class BuildingTile extends cc.Component {
 
     this.width = maxX - minX+1;
     this.height = maxY - minY+1;
-    this.node.anchorX = (this.width-1)/2;
-    this.node.anchorY = (this.height-1)/2;
+    cc.log("width:"+this.width+" height:"+this.height)
+    // this.node.anchorX = (this.width-1)/2;
+    // this.node.anchorY = (this.height-1)/2;
+    this.node.anchorX = 0.5;
+    this.node.anchorY = 0.5;
     cc.log("anchorX:"+this.node.anchorX+" anchorY:"+this.node.anchorY)
   }
 
-  addBlock(opt){
+  addBlock(opt, offsetX, offsetY){
     var position = opt.position;
     if ( this.getBlock(position) ) {
       cc.error("already a block in position:"+position.x+" "+position.y)
@@ -54,13 +57,13 @@ export default class BuildingTile extends cc.Component {
     }
     var blockNode = cc.instantiate(Global.game.blockPrefabMap["block"])
 
-    blockNode.x = Global.TILE_WIDTH*position.x;
-    blockNode.y = Global.TILE_HEIGHT*position.y;
+    blockNode.x = Global.TILE_WIDTH*position.x-offsetX;
+    blockNode.y = Global.TILE_HEIGHT*position.y-offsetY;
     this.node.addChild(blockNode);
 
     let block = blockNode.getComponent("block");
     block.position = position;
-    block.gainIcon(opt.type, opt.amount)
+    block.gainIcon(opt.type, opt.amount, opt.isExtract)
     this.blocks.push(block);
   }
 

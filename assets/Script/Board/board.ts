@@ -82,4 +82,14 @@ export default class Board extends cc.Component {
   getArea(position): Area {
     return this.areas[position.x][position.y];
   }
+
+  forEachBlock(callback) {
+    for ( let x =0; x<this.maxWidth; x++) {
+      for ( let y = 0; y < this.maxHeight; y++ ) {
+        if ( this.areas[x][y].block ) {
+          callback( this.areas[x][y].block, this.areas[x][y], x, y );
+        }
+      }
+    }
+  }
 }

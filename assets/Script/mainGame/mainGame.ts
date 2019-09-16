@@ -9,6 +9,8 @@ import Board from "board"
 export default class MainGame extends cc.Component {
   private res = {};
   private maxRes = {};
+  private turn = "";
+  
   @property(Board)
   public board: Board = null;
   @property([cc.Prefab])
@@ -146,6 +148,8 @@ export default class MainGame extends cc.Component {
   public blockPrefabMap = {};
   public areaPrefabMap = {};
 
+  private extractActions = [];
+
   start () {
     Global.game = this;
     this.initUI()
@@ -266,7 +270,9 @@ export default class MainGame extends cc.Component {
   }
   setTileEventHandler(node:cc.Node):void{
     node.on("touchstart",function(event){
+      cc.log("touchstart1")
       if ( this.phase !== "placeTile" ) return;
+      cc.log("touchstart2")
       if ( this.currentDraggingTile ) return;
       this.currentDraggingTile = node;
       this.draggingTileOriginPosition = {
@@ -278,6 +284,8 @@ export default class MainGame extends cc.Component {
     },this)
     node.on("touchmove",function(event){
       if ( this.phase !== "placeTile" ) return;
+      
+      cc.log("touchmove")
       let locationInNode = event.getLocation();
       if ( locationInNode.y <= this.boardBottomLine ) {
         if ( this.prevDraggingPosition.y > this.boardBottomLine ) {
@@ -309,35 +317,41 @@ export default class MainGame extends cc.Component {
 
       let tile = node.getComponent("buildingTile")
       //find position of tile
-      let x = Math.floor((node.x/(this.board.scaleRate*Global.TILE_WIDTH) - tile.width/2 )
+      let x = Math.floor(((node.x-Global.TILE_WIDTH/2)/(this.board.scaleRate*Global.TILE_WIDTH) - tile.width/2 )
         - (this.board.node.x/(this.board.scaleRate*Global.TILE_WIDTH) - this.board.width/2))+this.board.minX+1;
-      let y = Math.floor((node.y/(this.board.scaleRate*Global.TILE_HEIGHT) - tile.height/2 )
+      let y = Math.floor(((node.y-Global.TILE_HEIGHT/2)/(this.board.scaleRate*Global.TILE_HEIGHT) - tile.height/2 )
         - (this.board.node.y/(this.board.scaleRate*Global.TILE_HEIGHT) - this.board.height/2))+this.board.minY+1;
       let position = {x,y}
       this.checkTileValidOnBoard(node, position)
     },this)
-    node.on("touchend",function(event){
-      if ( this.phase !== "placeTile" ) return;
-      let locationInNode = event.getLocation();
-      if ( locationInNode.y <= this.boardBottomLine ) {
-        this.putBackTile(node)
-      } else {
-        let tile = node.getComponent("buildingTile")
-        //find position of tile
-        let x = Math.floor((node.x/(this.board.scaleRate*Global.TILE_WIDTH) - tile.width/2 )
-          - (this.board.node.x/(this.board.scaleRate*Global.TILE_WIDTH) - this.board.width/2))+this.board.minX+1;
-        let y = Math.floor((node.y/(this.board.scaleRate*Global.TILE_HEIGHT) - tile.height/2 )
-          - (this.board.node.y/(this.board.scaleRate*Global.TILE_HEIGHT) - this.board.height/2))+this.board.minY+1;
+    node.on("touchend",(event)=>{
+      this.onTouchEnd(event,node)
+    },this);
+    node.on("touchcancel",(event)=>{
+      this.onTouchEnd(event,node)
+    },this);
+  }
+  onTouchEnd(event, node){
+    if ( this.phase !== "placeTile" ) return;
+    let locationInNode = event.getLocation();
+    if ( locationInNode.y <= this.boardBottomLine ) {
+      this.putBackTile(node)
+    } else {
+      let tile = node.getComponent("buildingTile")
+      //find position of tile
+      let x = Math.floor(((node.x-Global.TILE_WIDTH/2)/(this.board.scaleRate*Global.TILE_WIDTH) - tile.width/2 )
+        - (this.board.node.x/(this.board.scaleRate*Global.TILE_WIDTH) - this.board.width/2))+this.board.minX+1;
+      let y = Math.floor(((node.y-Global.TILE_HEIGHT/2)/(this.board.scaleRate*Global.TILE_HEIGHT) - tile.height/2 )
+        - (this.board.node.y/(this.board.scaleRate*Global.TILE_HEIGHT) - this.board.height/2))+this.board.minY+1;
 
-        let position = {x,y}
-        if ( this.checkTileValidOnBoard(node, position) ) {
-          this.putTileOnBoard(node, position)
-        } else {
-          this.putBackTile(node)
-        }
+      let position = {x,y}
+      if ( this.checkTileValidOnBoard(node, position) ) {
+        this.putTileOnBoard(node, position)
+      } else {
+        this.putBackTile(node)
       }
-      this.currentDraggingTile = null;
-    },this)
+    }
+    this.currentDraggingTile = null;
   }
   putBackTile(tileNode:cc.Node): void {
     for ( let i = 0; i < tileNode.children.length; i++ ){
@@ -385,7 +399,7 @@ export default class MainGame extends cc.Component {
         y: position.y + blockNode.getComponent("block").position.y
       })
       area.gainBlock(blockNode)
-      this.setBlockEventHandler(blockNode)
+      // this.setBlockEventHandler(blockNode)
     }
     this.removeTileFromLine(tileNode)
     this.drawTileToLine();
@@ -494,12 +508,103 @@ export default class MainGame extends cc.Component {
     this.activeTileLine(true);
   }
   collectResource(){
-    this.phase = "collectResource"
+    this.phase = "collectResource";
     this.activeTileLine(false);
+    
+    this.extractActions = [];
+    // mark all resource
+    this.board.forEachBlock( (block, area, x, y){
+      if ( block ) {
+        block.forEachIcon((node)=>{
+          let icon = node.getComponent("icon");
+          if ( icon.isExtract ) {
+            this.collectResourceFromBlock(icon, block.position)
+          }
+        });
+      }
+    })
+    //gain all resource
+    var totals = {
+      food: 0,
+      produce: 0,
+      research: 0,
+      gold: 0
+    };
+
+    this.extractActions.forEach( (extraAction)=>{
+      let iconNode = extraAction.iconNode;
+      let area = extraAction.area;
+      iconNode = area.block.extractOneIconNode(iconNode)
+      this.node.addChild(iconNode);
+      let type = iconNode.getComponent('icon').type;
+      totals[type]++;
+
+      this.collectOneResourceIconNode(iconNode, type);
+    })
+
+    //TODO gainResource effect
+    this.scheduleOnce(()=>{
+      this.turnEnd();
+    },Global.GET_REWARD_TIME+0.2);
   }
+  collectOneResourceIconNode(iconNode, type) {
+    var resLabel = this.resLabel[type];
+    iconNode.runAction(cc.sequence(
+      cc.delayTime(Math.random()*0.2),
+      cc.spawn(
+        cc.moveTo(Global.GET_REWARD_TIME,resLabel.node.x,resLabel.node.y),
+        cc.scaleTo(Global.GET_REWARD_TIME,0.5,0.5)
+      ),
+      cc.removeSelf(),
+      cc.callFunc(function(){
+        if ( type === "research" ) {
+          this.gainResearch(1)
+        } else if ( type === "produce" ) {
+          this.gainProduce(1)
+        } else if ( type === "food" ) {
+          this.gainFood(1)
+        } else if ( type === "gold" ) {
+          this.gold ++;
+        }
+      },this)
+    ))
+  }
+  collectResourceFromBlock(icon, position){
+    let type = icon.type;
+    let area = this.board.getArea(position);
+    let waitAreaList = [area];
+    let okAreaList = [];
+    while (waitAreaList.length){
+      let area = waitAreaList.shift();
+      if ( area.block ) {
+        let iconNodes = area.block.getIconNodes(type);
+        if ( iconNodes.length ) {
+          okAreaList.push(area);
+          
+          iconNodes.forEach( (iconNode)=>{
+            if ( !Utils.contains(this.extractActions, iconNode) ) {
+              this.extractActions.push({
+                iconNode,
+                area
+              });
+            }
+          })        
+          
+          Common.DIRECTIONS.forEach(function(direction){
+            let p = Common.getIncrementPosition(area.position, direction)
+            let adjacentArea = this.board.getArea(p);
+            if ( adjacentArea && !Utils.contains(okAreaList, adjacentArea) && !Utils.contains(waitAreaList, adjacentArea) ) {
+              waitAreaList.push(adjacentArea);
+            }
+          },this)
+        }
+      }
+    }
+  }
+
   turnEnd(){
-    this.phase = "turnEnd"
-    this.turn++
+    this.phase = "turnEnd";
+    this.turn++;
     this.turnStart();
   }
 });
