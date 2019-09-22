@@ -2,7 +2,6 @@ const {ccclass, property} = cc._decorator;
 const Global = require("global");
 import Block from "./block"
 
-
 @ccclass
 export default class BuildingTile extends cc.Component {
   private statusList = [];
@@ -23,30 +22,6 @@ export default class BuildingTile extends cc.Component {
 
   start(){
 
-  }
-
-  adjustCenter(){
-    let maxX = 0;
-    let maxY = 0;
-    let minX = 5;
-    let minY = 5;
-    this.blocks.forEach(function(block){
-      let x = block.position.x;
-      let y = block.position.y;
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
-    },this)
-
-    this.width = maxX - minX+1;
-    this.height = maxY - minY+1;
-    cc.log("width:"+this.width+" height:"+this.height)
-    // this.node.anchorX = (this.width-1)/2;
-    // this.node.anchorY = (this.height-1)/2;
-    this.node.anchorX = 0.5;
-    this.node.anchorY = 0.5;
-    cc.log("anchorX:"+this.node.anchorX+" anchorY:"+this.node.anchorY)
   }
 
   addBlock(opt, offsetX, offsetY){

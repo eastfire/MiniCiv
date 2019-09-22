@@ -2,93 +2,106 @@ const {ccclass, property} = cc._decorator;
 const Global = require("global");
 const Utils = require("utils");
 
+import {shuffle} from '../libs/lodash.min'
+
 @ccclass // 使用装饰器声明 CCClass
 export default class TileFactory extends cc.Component {
   public deck = [];
+  public discardDeck = [];
 
   constructor(){
     super();
     this.deck = [];
-    // this.deck.push({
-    //   blocks:[
-    //     {
-    //       position:{x:0,y:0},
-    //       type: "research"
-    //     },
-    //     {
-    //       position:{x:0,y:1},
-    //       type: "produce"
-    //     },
-    //     {
-    //       position:{x:1,y:0},
-    //       type: "food"
-    //     },
-    //     {
-    //       position:{x:1,y:1},
-    //       type: "food",
-    //       isExtract: true,
-    //     },
-    //   ],
-    //   width: 2,
-    //   height: 2,
-    //   name: "XXX"
-    // })
-    // this.deck.push({
-    //   blocks:[
-    //     {
-    //       position:{x:0,y:0},
-    //       type: "food"
-    //     },
-    //     {
-    //       position:{x:0,y:1},
-    //       type: "produce"
-    //     },
-    //     {
-    //       position:{x:1,y:0},
-    //       type: "research"
-    //     },
-    //     {
-    //       position:{x:1,y:1},
-    //       type: "research"
-    //       isExtract: true,
-    //     },
-    //   ],
-    //   width: 2,
-    //   height: 2,
-    //   name: "XXX"
-    // })
-    // this.deck.push({
-    //   blocks:[
-    //     {
-    //       position:{x:0,y:0},
-    //       type: "food"
-    //     },
-    //     {
-    //       position:{x:0,y:1},
-    //       type: "research"
-    //     },
-    //     {
-    //       position:{x:1,y:0},
-    //       type: "produce"
-    //     },
-    //     {
-    //       position:{x:1,y:1},
-    //       type: "produce"
-    //       isExtract: true,
-    //     },
-    //   ],
-    //   width: 2,
-    //   height: 2,
-    //   name: "XXX"
-    // })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "research",
+          isExtract: true,
+        },
+        {
+          position:{x:0,y:1},
+          type: "produce",
+          isExtract: true,
+        },
+        {
+          position:{x:1,y:0},
+          type: "food",
+          isExtract: true,
+        },
+        {
+          position:{x:1,y:1},
+          type: "score",
+          isExtract: true,
+        },
+      ],
+      name: "镇中心"
+    })
     this.deck.push({
       blocks:[
         {
           position:{x:0,y:0},
           type: "research"
-        }    
+        },
+        {
+          position:{x:0,y:1},
+          type: "produce"
+        },
+        {
+          position:{x:1,y:0},
+          type: "food"
+        },
+        {
+          position:{x:1,y:1},
+          type: "food",
+          isExtract: true,
+        },
       ],
-      name: "ZZZ"
+      name: "农田"
+    })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "food"
+        },
+        {
+          position:{x:0,y:1},
+          type: "produce"
+        },
+        {
+          position:{x:1,y:0},
+          type: "research"
+        },
+        {
+          position:{x:1,y:1},
+          type: "research",
+          isExtract: true,
+        },
+      ],
+      name: "寺庙"
+    })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "food"
+        },
+        {
+          position:{x:0,y:1},
+          type: "research"
+        },
+        {
+          position:{x:1,y:0},
+          type: "produce"
+        },
+        {
+          position:{x:1,y:1},
+          type: "produce",
+          isExtract: true,
+        },
+      ],
+      name: "矿场"
     })
     this.deck.push({
       blocks:[
@@ -103,38 +116,6 @@ export default class TileFactory extends cc.Component {
       ],
       name: "BBB"
     })
-    this.deck.push({
-      blocks:[
-        {
-          position:{x:0,y:0},
-          type: "research"
-        },
-        {
-          position:{x:0,y:1},
-          type: "produce"
-        },
-        {
-          position:{x:0,y:2},
-          type: "produce"
-        }        
-      ],
-      name: "AAA"
-    })
-    // this.deck.push({
-    //   blocks:[
-    //     {
-    //       position:{x:0,y:0},
-    //       type: "research"
-    //     },
-    //     {
-    //       position:{x:0,y:1},
-    //       type: "food""
-    //     }        
-    //   ],
-    //   width: 2,
-    //   height: 1,
-    //   name: "XXX"
-    // })
     // this.deck.push({
     //   blocks:[
     //     {
@@ -143,16 +124,43 @@ export default class TileFactory extends cc.Component {
     //     },
     //     {
     //       position:{x:0,y:1},
-    //       type: "food"
+    //       type: "gold",
+    //       isExtract: true
     //     }        
     //   ],
-    //   width: 2,
-    //   height: 1,
-    //   name: "XXX"
+    //   name: "金矿"
     // })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "research"
+        },
+        {
+          position:{x:0,y:1},
+          type: "food"
+        }       
+      ],
+      name: "AAA"
+    })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "produce"
+        },
+        {
+          position:{x:0,y:1},
+          type: "food"
+        }        
+      ],
+      name: "CCC"
+    })
     this.deck.forEach((card)=>{
       this.calculateCard(card);
     })
+
+    this.deck = shuffle(this.deck);
   }
   calculateCard(card){
     let maxX = 0;
@@ -174,7 +182,13 @@ export default class TileFactory extends cc.Component {
     let node = new cc.Node();
     node.addComponent("buildingTile")
 
-    let card = Utils.sample(this.deck)
+    if ( this.deck.length == 0 ) {
+      this.deck = shuffle(this.discardDeck);
+      this.discardDeck = [];
+    }
+    let card = this.deck.pop();
+    node.getComponent("buildingTile").card = card;
+
     card = JSON.parse(JSON.stringify(card)); //复制一份
     let result = Utils.rotateTile(Utils.random(0,3), card.blocks, card.width, card.height )
     card.width = result.width;
@@ -187,16 +201,17 @@ export default class TileFactory extends cc.Component {
     })
     node.getComponent("buildingTile").width = card.width;
     node.getComponent("buildingTile").height = card.height;
+    
     node.anchorX = 0.5;
     node.anchorY = 0.5;
     node.width = card.width*Global.TILE_WIDTH;
     node.height = (card.height)*Global.TILE_HEIGHT;
     return node;
   }
-  addTile(){
-
+  discardTile(card){
+    this.discardDeck.push(card);
   }
-  discardTile(){
+  addTile(){
 
   }
 }

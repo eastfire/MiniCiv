@@ -27,6 +27,9 @@ export default class MainGame extends cc.Component {
   public foodLabel: cc.Label = null;
   @property(cc.Label)
   public goldLabel: cc.Label = null;
+  @property(cc.Label)
+  public scoreLabel: cc.Label = null;
+
   @property(cc.Sprite)
   public researchIcon: cc.Sprite = null;
   @property(cc.Sprite)
@@ -35,8 +38,9 @@ export default class MainGame extends cc.Component {
   public foodIcon: cc.Sprite = null;
   @property(cc.Sprite)
   public goldIcon: cc.Sprite = null;
-  @property(cc.Label)
-  public scoreLabel: cc.Label = null;
+  @property(cc.Sprite)
+  public scoreIcon: cc.Sprite = null;
+  
   @property(cc.Sprite)
   public researchObjectIcon: cc.Sprite = null;
   @property(cc.Sprite)
@@ -132,16 +136,16 @@ export default class MainGame extends cc.Component {
     this.resLabel.gold.string = this.res.gold;
   }
 
-  private _score = -1;
   @property
   public get score(){
-    return this._score;
+    return this.res.score;
   }
   @property
   public set score(newValue){
-    if ( this._score == newValue ) return;
-    this._score = newValue;
-    this.scoreLabel.string = this._score;
+    cc.log("score:"+newValue)
+    if ( this.res.score == newValue ) return;
+    this.res.score = newValue;
+    this.resLabel.score.string = this.res.score;
   }
 
   public iconPrefabMap = {};
@@ -173,11 +177,13 @@ export default class MainGame extends cc.Component {
     this.resIcon.gold = this.goldIcon;
     this.resIcon.produce = this.produceIcon;
     this.resIcon.food = this.foodIcon;
+    this.resIcon.score = this.scoreIcon;
 
     this.resLabel.research = this.researchLabel;
     this.resLabel.gold = this.goldLabel;
     this.resLabel.produce = this.produceLabel;
     this.resLabel.food = this.foodLabel;
+    this.resLabel.score = this.scoreLabel;
 
 
   }
@@ -190,6 +196,7 @@ export default class MainGame extends cc.Component {
     this.research = Global.INIT_RESEARCH;
     this.produce = Global.INIT_PRODUCE;
     this.gold = Global.INIT_GOLD;
+    this.score = Global.INIT_SCORE;
 
     this.maxFood = Global.INIT_MAX_FOOD;
     this.maxResearch = Global.INIT_MAX_RESEARCH;
@@ -248,6 +255,7 @@ export default class MainGame extends cc.Component {
     this.refreshTilePosition();
   }
   removeTileFromLine(tileNode):void{
+    this.tileFactory.discardTile(tileNode.getComponent("buildingTile").card);
     let index = this.tiles.indexOf(tileNode);
     if ( index !== -1 ) {
       tileNode.removeFromParent(true)
@@ -270,9 +278,7 @@ export default class MainGame extends cc.Component {
   }
   setTileEventHandler(node:cc.Node):void{
     node.on("touchstart",function(event){
-      cc.log("touchstart1")
       if ( this.phase !== "placeTile" ) return;
-      cc.log("touchstart2")
       if ( this.currentDraggingTile ) return;
       this.currentDraggingTile = node;
       this.draggingTileOriginPosition = {
@@ -284,8 +290,6 @@ export default class MainGame extends cc.Component {
     },this)
     node.on("touchmove",function(event){
       if ( this.phase !== "placeTile" ) return;
-      
-      cc.log("touchmove")
       let locationInNode = event.getLocation();
       if ( locationInNode.y <= this.boardBottomLine ) {
         if ( this.prevDraggingPosition.y > this.boardBottomLine ) {
@@ -399,79 +403,11 @@ export default class MainGame extends cc.Component {
         y: position.y + blockNode.getComponent("block").position.y
       })
       area.gainBlock(blockNode)
-      // this.setBlockEventHandler(blockNode)
     }
     this.removeTileFromLine(tileNode)
     this.drawTileToLine();
     this.collectResource();
-  }
-  setBlockEventHandler(blockNode:cc.Node):void{
-    blockNode.on("touchend",function(event){
-      if ( this.phase !== "collectResource" ) return;
-      let block = blockNode.getComponent("block")
-      var icons = block.getAllIcon();
-      if ( icons.length > 1 ) {
-        //TODO choose a icon
-      } else if ( icons.length == 1 ){
-        this.extractIcon(icons[0].type, block.position)
-      }
-    },this)
-  }
-  private extractIcon(type, position){
-    let area = this.board.getArea(position);
-    this.waitAreaList = [area];
-    this.okAreaList = [];
-    while (this.waitAreaList.length){
-      let area = this.waitAreaList.shift();
-      if ( area.block && area.block.getIcon(type) ) {
-        this.okAreaList.push(area);
-        Common.DIRECTIONS.forEach(function(direction){
-          let p = Common.getIncrementPosition(area.position, direction)
-          let adjacentArea = this.board.getArea(p);
-          if ( adjacentArea && !Utils.contains(this.okAreaList, adjacentArea) && !Utils.contains(this.waitAreaList, adjacentArea) ) {
-            this.waitAreaList.push(adjacentArea);
-          }
-        },this)
-      }
-    }
-    var total = 0
-    this.okAreaList.forEach(function(area){
-      do {
-        let iconNode = area.block.extractOneIcon(type)
-        if ( iconNode ) {
-          total++;
-          this.node.addChild(iconNode)
-
-          var resLabel = this.resLabel[type];
-          iconNode.runAction(cc.sequence(
-            cc.delayTime(Math.random()*0.2),
-            cc.spawn(
-              cc.moveTo(Global.GET_REWARD_TIME,resLabel.node.x,resLabel.node.y),
-              cc.scaleTo(Global.GET_REWARD_TIME,0.5,0.5)
-            ),
-            cc.removeSelf(),
-            cc.callFunc(function(){
-              if ( type === "research" ) {
-                this.gainResearch(1)
-              } else if ( type === "produce" ) {
-                this.gainProduce(1)
-              } else if ( type === "food" ) {
-                this.gainFood(1)
-              } else if ( type === "gold" ) {
-                this.gold ++;
-              }
-            },this)
-          ))
-        }
-      } while (iconNode);
-    },this)
-    //onGetTotalRes
-
-
-    this.scheduleOnce(()=>{
-      this.turnEnd();
-    },Global.GET_REWARD_TIME+0.2);
-  }
+  }  
   turnStart(){
     this.phase = "turnStart"
     this.startPlaceTile();
@@ -528,7 +464,8 @@ export default class MainGame extends cc.Component {
       food: 0,
       produce: 0,
       research: 0,
-      gold: 0
+      gold: 0,
+      score: 0,
     };
 
     this.extractActions.forEach( (extraAction)=>{
@@ -549,6 +486,8 @@ export default class MainGame extends cc.Component {
   }
   collectOneResourceIconNode(iconNode, type) {
     var resLabel = this.resLabel[type];
+    
+    cc.log("type:"+type);
     iconNode.runAction(cc.sequence(
       cc.delayTime(Math.random()*0.2),
       cc.spawn(
@@ -557,6 +496,7 @@ export default class MainGame extends cc.Component {
       ),
       cc.removeSelf(),
       cc.callFunc(function(){
+        cc.log("type:"+type);
         if ( type === "research" ) {
           this.gainResearch(1)
         } else if ( type === "produce" ) {
@@ -565,6 +505,8 @@ export default class MainGame extends cc.Component {
           this.gainFood(1)
         } else if ( type === "gold" ) {
           this.gold ++;
+        } else if ( type === "score" ) {
+          this.score ++;
         }
       },this)
     ))
@@ -582,7 +524,9 @@ export default class MainGame extends cc.Component {
           okAreaList.push(area);
           
           iconNodes.forEach( (iconNode)=>{
-            if ( !Utils.contains(this.extractActions, iconNode) ) {
+            if ( !this.extractActions.find(action=>{
+                  return action.iconNode==iconNode
+                }) ) {
               this.extractActions.push({
                 iconNode,
                 area
