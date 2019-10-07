@@ -1,14 +1,13 @@
 {
-  "ver": "2.3.1",
+  "ver": "2.2.0",
   "uuid": "85d13aee-06e4-4825-b07e-3d5ea02c6482",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
-  "platformSettings": {},
   "subMetas": {
     "icon-food": {
-      "ver": "1.0.4",
+      "ver": "1.0.3",
       "uuid": "55dfa22a-5fd4-4728-a7bb-ba36737e3926",
       "rawTextureUuid": "85d13aee-06e4-4825-b07e-3d5ea02c6482",
       "trimType": "auto",

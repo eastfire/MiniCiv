@@ -1,14 +1,13 @@
 {
-  "ver": "2.3.1",
+  "ver": "2.2.0",
   "uuid": "8ae22d96-ed5f-4b15-a937-592cbfc6be26",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
-  "platformSettings": {},
   "subMetas": {
     "icon-science": {
-      "ver": "1.0.4",
+      "ver": "1.0.3",
       "uuid": "ba9ef3d4-98e5-4200-9b19-4671655ffdef",
       "rawTextureUuid": "8ae22d96-ed5f-4b15-a937-592cbfc6be26",
       "trimType": "auto",

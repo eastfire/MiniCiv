@@ -12,6 +12,31 @@ export default class TileFactory extends cc.Component {
   constructor(){
     super();
     this.deck = [];
+    // this.deck.push({
+    //   blocks:[
+    //     {
+    //       position:{x:0,y:0},
+    //       type: "research",
+    //       isExtract: true,
+    //     },
+    //     {
+    //       position:{x:0,y:1},
+    //       type: "produce",
+    //       isExtract: true,
+    //     },
+    //     {
+    //       position:{x:1,y:0},
+    //       type: "food",
+    //       isExtract: true,
+    //     },
+    //     {
+    //       position:{x:1,y:1},
+    //       type: "score",
+    //       isExtract: true,
+    //     },
+    //   ],
+    //   name: "独裁政体"
+    // })
     this.deck.push({
       blocks:[
         {
@@ -21,21 +46,18 @@ export default class TileFactory extends cc.Component {
         },
         {
           position:{x:0,y:1},
-          type: "produce",
-          isExtract: true,
+          type: "produce"
         },
         {
           position:{x:1,y:0},
-          type: "food",
-          isExtract: true,
+          type: "food"
         },
         {
           position:{x:1,y:1},
-          type: "score",
-          isExtract: true,
+          type: "food"
         },
       ],
-      name: "镇中心"
+      name: "A"
     })
     this.deck.push({
       blocks:[
@@ -45,7 +67,8 @@ export default class TileFactory extends cc.Component {
         },
         {
           position:{x:0,y:1},
-          type: "produce"
+          type: "produce",
+          isExtract: true,
         },
         {
           position:{x:1,y:0},
@@ -54,10 +77,32 @@ export default class TileFactory extends cc.Component {
         {
           position:{x:1,y:1},
           type: "food",
-          isExtract: true,
+          // isExtract: true,
         },
       ],
-      name: "农田"
+      name: "B"
+    })
+    this.deck.push({
+      blocks:[
+        {
+          position:{x:0,y:0},
+          type: "food",
+          isExtract: true,
+        },
+        {
+          position:{x:0,y:1},
+          type: "produce"
+        },
+        {
+          position:{x:1,y:0},
+          type: "research"
+        },
+        {
+          position:{x:1,y:1},
+          type: "research"
+        },
+      ],
+      name: "C"
     })
     this.deck.push({
       blocks:[
@@ -67,7 +112,8 @@ export default class TileFactory extends cc.Component {
         },
         {
           position:{x:0,y:1},
-          type: "produce"
+          type: "produce",
+          isExtract: true,
         },
         {
           position:{x:1,y:0},
@@ -76,16 +122,16 @@ export default class TileFactory extends cc.Component {
         {
           position:{x:1,y:1},
           type: "research",
-          isExtract: true,
         },
       ],
-      name: "寺庙"
+      name: "D"
     })
     this.deck.push({
       blocks:[
         {
           position:{x:0,y:0},
-          type: "food"
+          type: "food",
+          isExtract: true,
         },
         {
           position:{x:0,y:1},
@@ -97,25 +143,46 @@ export default class TileFactory extends cc.Component {
         },
         {
           position:{x:1,y:1},
-          type: "produce",
-          isExtract: true,
+          type: "produce"
         },
       ],
-      name: "矿场"
-    })
+      name: "E"
+    }),
     this.deck.push({
       blocks:[
         {
           position:{x:0,y:0},
-          type: "research"
+          type: "food"
         },
         {
           position:{x:0,y:1},
+          type: "research",
+          isExtract: true,
+        },
+        {
+          position:{x:1,y:0},
           type: "produce"
-        }        
+        },
+        {
+          position:{x:1,y:1},
+          type: "produce",
+        },
       ],
-      name: "BBB"
+      name: "F"
     })
+    // this.deck.push({
+    //   blocks:[
+    //     {
+    //       position:{x:0,y:0},
+    //       type: "research"
+    //     },
+    //     {
+    //       position:{x:0,y:1},
+    //       type: "produce"
+    //     }        
+    //   ],
+    //   name: "BBB"
+    // })
     // this.deck.push({
     //   blocks:[
     //     {
@@ -130,32 +197,32 @@ export default class TileFactory extends cc.Component {
     //   ],
     //   name: "金矿"
     // })
-    this.deck.push({
-      blocks:[
-        {
-          position:{x:0,y:0},
-          type: "research"
-        },
-        {
-          position:{x:0,y:1},
-          type: "food"
-        }       
-      ],
-      name: "AAA"
-    })
-    this.deck.push({
-      blocks:[
-        {
-          position:{x:0,y:0},
-          type: "produce"
-        },
-        {
-          position:{x:0,y:1},
-          type: "food"
-        }        
-      ],
-      name: "CCC"
-    })
+    // this.deck.push({
+    //   blocks:[
+    //     {
+    //       position:{x:0,y:0},
+    //       type: "research"
+    //     },
+    //     {
+    //       position:{x:0,y:1},
+    //       type: "food"
+    //     }       
+    //   ],
+    //   name: "AAA"
+    // })
+    // this.deck.push({
+    //   blocks:[
+    //     {
+    //       position:{x:0,y:0},
+    //       type: "produce"
+    //     },
+    //     {
+    //       position:{x:0,y:1},
+    //       type: "food"
+    //     }        
+    //   ],
+    //   name: "CCC"
+    // })
     this.deck.forEach((card)=>{
       this.calculateCard(card);
     })

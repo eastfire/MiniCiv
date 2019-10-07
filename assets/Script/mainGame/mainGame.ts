@@ -9,7 +9,7 @@ import Board from "board"
 export default class MainGame extends cc.Component {
   private res = {};
   private maxRes = {};
-  private turn = "";
+  private _turn = 1;
   
   @property(Board)
   public board: Board = null;
@@ -29,6 +29,8 @@ export default class MainGame extends cc.Component {
   public goldLabel: cc.Label = null;
   @property(cc.Label)
   public scoreLabel: cc.Label = null;
+  @property(cc.Label)
+  public turnLabel: cc.Label = null;
 
   @property(cc.Sprite)
   public researchIcon: cc.Sprite = null;
@@ -40,6 +42,8 @@ export default class MainGame extends cc.Component {
   public goldIcon: cc.Sprite = null;
   @property(cc.Sprite)
   public scoreIcon: cc.Sprite = null;
+  @property(cc.Sprite)
+  public turnIcon: cc.Sprite = null;
   
   @property(cc.Sprite)
   public researchObjectIcon: cc.Sprite = null;
@@ -142,10 +146,20 @@ export default class MainGame extends cc.Component {
   }
   @property
   public set score(newValue){
-    cc.log("score:"+newValue)
     if ( this.res.score == newValue ) return;
     this.res.score = newValue;
     this.resLabel.score.string = this.res.score;
+  }
+
+  @property
+  public get turn(){
+    return this._turn;
+  }
+  @property
+  public set turn(newValue){
+    if ( this._turn == newValue ) return;
+    this._turn = newValue;
+    this.turnLabel.string = this._turn.toString();
   }
 
   public iconPrefabMap = {};
@@ -185,7 +199,7 @@ export default class MainGame extends cc.Component {
     this.resLabel.food = this.foodLabel;
     this.resLabel.score = this.scoreLabel;
 
-
+    this.turnLabel.string = this.turn;
   }
   initParams():void{
     this.tileChoiceCount = Global.INIT_TILE_CHOICE_COUNT;
@@ -415,28 +429,55 @@ export default class MainGame extends cc.Component {
   gainResearch(amount){
     if ( amount+this.research <= this.maxResearch ) {
       this.research += amount;
+      this.extraRes.research=0;
     } else {
       this.extraRes.research = amount - ( this.maxResearch - this.research );
       this.research = this.maxResearch;
+    }
+    if ( this.research === this.maxResearch ) {
       //TODO on researchFull
+
+      this.maxResearch++;
+      this.research = 0;
+      if ( this.extraRes.research ) {
+        this.gainResearch(this.extraRes.research);
+      }
     }
   }
   gainProduce(amount){
     if ( amount+this.produce <= this.maxProduce ) {
       this.produce += amount;
+      this.extraRes.produce = 0;
     } else {
       this.extraRes.produce = amount - ( this.maxProduce - this.produce );
       this.produce = this.maxProduce;
+    }
+    if ( this.produce === this.maxProduce ) {
       //TODO on produce Full
+
+      this.maxProduce++;
+      this.produce = 0;
+      if ( this.extraRes.produce ) {
+        this.gainProduce(this.extraRes.produce);
+      }
     }
   }
   gainFood(amount){
     if ( amount+this.food <= this.maxFood ) {
       this.food += amount;
+      this.extraRes.food = 0;
     } else {
       this.extraRes.food = amount - ( this.maxFood - this.food );
       this.food = this.maxFood;
+    }
+    if ( this.food === this.maxFood ) {
       //TODO on food Full
+    
+      this.maxFood++;
+      this.food = 0;
+      if ( this.extraRes.food ) {
+        this.gainFood(this.extraRes.food);
+      }
     }
   }
   startPlaceTile(){
@@ -487,7 +528,6 @@ export default class MainGame extends cc.Component {
   collectOneResourceIconNode(iconNode, type) {
     var resLabel = this.resLabel[type];
     
-    cc.log("type:"+type);
     iconNode.runAction(cc.sequence(
       cc.delayTime(Math.random()*0.2),
       cc.spawn(
@@ -496,7 +536,6 @@ export default class MainGame extends cc.Component {
       ),
       cc.removeSelf(),
       cc.callFunc(function(){
-        cc.log("type:"+type);
         if ( type === "research" ) {
           this.gainResearch(1)
         } else if ( type === "produce" ) {
